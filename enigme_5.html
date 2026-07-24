@@ -167,7 +167,7 @@
   <div class="revelation" id="revelation">
     <div class="eyebrow">Indice révélé</div>
     <div class="question-finale">
-      «Combien»
+      «Godin»
     </div>
     <div class="note">
       Rendez-vous au QR code de saisie finale pour entrer<br>
@@ -187,12 +187,12 @@
     const val = champ.value.trim().toLowerCase();
 
     if(val === bonneReponse){
-      msg.textContent = "✓ Moule ouvert.";
+      msg.textContent = "✓ Bravo";
       msg.classList.remove('erreur');
       rev.classList.add('visible');
       champ.disabled = true;
     } else {
-      msg.textContent = "✗ Ce n'est pas la bonne marque. Réessayez.";
+      msg.textContent = "✗ Ce n'est pas la bonne réponse. Réessayez.";
       msg.classList.add('erreur');
     }
   }
