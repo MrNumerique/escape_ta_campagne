@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Atelier Godin — Énigme</title>
+<style>
+  :root{
+    --fonte:#1c1a17;
+    --fonte-clair:#2e2a24;
+    --braise:#c1502e;
+    --braise-vive:#e8703f;
+    --fer:#8a8378;
+    --parchemin:#e8dcc4;
+    --or:#c9a24b;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    background:
+      radial-gradient(circle at 50% 0%, rgba(200,100,50,0.08), transparent 60%),
+      var(--fonte);
+    background-attachment:fixed;
+    font-family: 'Georgia', 'Times New Roman', serif;
+    color:var(--parchemin);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:100vh;
+    padding:24px;
+  }
+  .plaque{
+    width:100%;
+    max-width:480px;
+    background:linear-gradient(180deg, var(--fonte-clair), var(--fonte));
+    border:1px solid #4a443b;
+    border-radius:4px;
+    box-shadow:
+      0 0 0 1px rgba(0,0,0,0.6),
+      inset 0 1px 0 rgba(255,255,255,0.04),
+      0 20px 60px rgba(0,0,0,0.6);
+    padding:32px 28px;
+    position:relative;
+    overflow:hidden;
+  }
+  .plaque::before{
+    content:"";
+    position:absolute; top:0; left:0; right:0; height:4px;
+    background:linear-gradient(90deg, var(--braise), var(--or), var(--braise));
+  }
+  .eyebrow{
+    font-family:'Courier New', monospace;
+    letter-spacing:.25em;
+    text-transform:uppercase;
+    font-size:11px;
+    color:var(--fer);
+    margin-bottom:6px;
+  }
+  h1{
+    font-size:22px;
+    font-weight:400;
+    letter-spacing:.02em;
+    color:var(--braise-vive);
+    margin-bottom:18px;
+    border-bottom:1px solid #4a443b;
+    padding-bottom:14px;
+  }
+  .enigme{
+    font-size:17px;
+    line-height:1.65;
+    color:var(--parchemin);
+    margin-bottom:22px;
+    min-height:60px;
+    /* MODIFIE LE TEXTE CI-DESSOUS DANS LE HTML POUR CHAQUE QR CODE */
+  }
+  .zone-reponse{
+    display:flex;
+    gap:10px;
+    margin-bottom:14px;
+  }
+  input[type="text"]{
+    flex:1;
+    background:#141210;
+    border:1px solid #4a443b;
+    color:var(--parchemin);
+    font-family:'Courier New', monospace;
+    font-size:16px;
+    padding:12px 14px;
+    border-radius:2px;
+    letter-spacing:.05em;
+  }
+  input[type="text"]:focus{
+    outline:none;
+    border-color:var(--braise);
+  }
+  button{
+    background:var(--braise);
+    color:var(--parchemin);
+    border:none;
+    font-family:'Courier New', monospace;
+    text-transform:uppercase;
+    letter-spacing:.1em;
+    font-size:13px;
+    padding:0 18px;
+    border-radius:2px;
+    cursor:pointer;
+    transition:background .15s;
+  }
+  button:hover{background:var(--braise-vive);}
+  .message{
+    font-family:'Courier New', monospace;
+    font-size:13px;
+    letter-spacing:.03em;
+    min-height:18px;
+    color:var(--fer);
+  }
+  .message.erreur{color:var(--braise-vive);}
+
+  .revelation{
+    display:none;
+    margin-top:24px;
+    padding-top:22px;
+    border-top:1px dashed #4a443b;
+    animation:apparait .6s ease;
+  }
+  .revelation.visible{display:block;}
+  @keyframes apparait{
+    from{opacity:0; transform:translateY(6px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+  .revelation .eyebrow{color:var(--or);}
+  .question-finale{
+    font-size:20px;
+    color:var(--or);
+    line-height:1.5;
+    font-style:italic;
+  }
+  .note{
+    margin-top:14px;
+    font-family:'Courier New', monospace;
+    font-size:12px;
+    color:var(--fer);
+    line-height:1.6;
+  }
+</style>
+</head>
+<body>
+
+<div class="plaque">
+  <div class="eyebrow">Atelier Godin · Fonte n°1</div>
+  <h1>Énigme</h1>
+
+  <div class="enigme">
+    <!--
+      ⚙️ MODIFIE ICI L'ÉNONCÉ DE L'ÉNIGME POUR CHAQUE QR CODE.
+      Duplique ce fichier et change ce texte + la bonne réponse plus bas (variable bonneReponse).
+    -->
+    Un Nénuphar double de taille chaque jours dans un étang et met 30 joursà le recouvrir. Combien de temps pour couvrir la moitié de l'étang ?
+  </div>
+
+  <div class="zone-reponse">
+    <input type="text" id="reponse" placeholder="Réponse" autocomplete="off" inputmode="text">
+    <button onclick="verifier()">Valider</button>
+  </div>
+  <div class="message" id="message"></div>
+
+  <div class="revelation" id="revelation">
+    <div class="eyebrow">Indice révélé</div>
+    <div class="question-finale">
+      «temps»
+    </div>
+    <div class="note">
+      Rendez-vous au QR code de saisie finale pour entrer<br>
+      cette question et votre réponse en nombre d'années.
+    </div>
+  </div>
+</div>
+
+<script>
+  // ⚙️ Change la bonne réponse ici (en minuscule, sans accents si besoin)
+  const bonneReponse = "29";
+
+  function verifier(){
+    const champ = document.getElementById('reponse');
+    const msg = document.getElementById('message');
+    const rev = document.getElementById('revelation');
+    const val = champ.value.trim().toLowerCase();
+
+    if(val === bonneReponse){
+      msg.textContent = "✓ Moule ouvert.";
+      msg.classList.remove('erreur');
+      rev.classList.add('visible');
+      champ.disabled = true;
+    } else {
+      msg.textContent = "✗ Ce n'est pas la bonne marque. Réessayez.";
+      msg.classList.add('erreur');
+    }
+  }
+
+  document.getElementById('reponse').addEventListener('keydown', e=>{
+    if(e.key === 'Enter') verifier();
+  });
+</script>
+
+</body>
+</html>
