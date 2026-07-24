@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Atelier Godin — Saisie finale</title>
+<style>
+  :root{
+    --fonte:#1c1a17;
+    --fonte-clair:#2e2a24;
+    --braise:#c1502e;
+    --braise-vive:#e8703f;
+    --fer:#8a8378;
+    --parchemin:#e8dcc4;
+    --or:#c9a24b;
+    --vert:#5a8a5a;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    background:
+      radial-gradient(circle at 50% 0%, rgba(200,100,50,0.08), transparent 60%),
+      var(--fonte);
+    background-attachment:fixed;
+    font-family:'Georgia','Times New Roman', serif;
+    color:var(--parchemin);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:100vh;
+    padding:24px;
+  }
+  .plaque{
+    width:100%;
+    max-width:480px;
+    background:linear-gradient(180deg, var(--fonte-clair), var(--fonte));
+    border:1px solid #4a443b;
+    border-radius:4px;
+    box-shadow:
+      0 0 0 1px rgba(0,0,0,0.6),
+      inset 0 1px 0 rgba(255,255,255,0.04),
+      0 20px 60px rgba(0,0,0,0.6);
+    padding:32px 28px;
+    position:relative;
+    overflow:hidden;
+    transition:box-shadow .4s;
+  }
+  .plaque::before{
+    content:"";
+    position:absolute; top:0; left:0; right:0; height:4px;
+    background:linear-gradient(90deg, var(--braise), var(--or), var(--braise));
+  }
+  .eyebrow{
+    font-family:'Courier New', monospace;
+    letter-spacing:.25em;
+    text-transform:uppercase;
+    font-size:11px;
+    color:var(--fer);
+    margin-bottom:6px;
+  }
+  h1{
+    font-size:22px;
+    font-weight:400;
+    color:var(--braise-vive);
+    margin-bottom:20px;
+    border-bottom:1px solid #4a443b;
+    padding-bottom:14px;
+  }
+  label{
+    display:block;
+    font-family:'Courier New', monospace;
+    font-size:12px;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+    color:var(--fer);
+    margin-bottom:8px;
+  }
+  .champ{margin-bottom:20px;}
+  input[type="text"], input[type="number"], select{
+    width:100%;
+    background:#141210;
+    border:1px solid #4a443b;
+    color:var(--parchemin);
+    font-family:'Courier New', monospace;
+    font-size:15px;
+    padding:12px 14px;
+    border-radius:2px;
+    letter-spacing:.03em;
+  }
+  select{
+    appearance:none;
+    -webkit-appearance:none;
+    background-image:linear-gradient(45deg, transparent 50%, var(--fer) 50%),
+                      linear-gradient(135deg, var(--fer) 50%, transparent 50%);
+    background-position: calc(100% - 20px) center, calc(100% - 14px) center;
+    background-size: 6px 6px, 6px 6px;
+    background-repeat:no-repeat;
+    cursor:pointer;
+  }
+  select option{
+    background:#141210;
+    color:var(--parchemin);
+  }
+  input:focus, select:focus{
+    outline:none;
+    border-color:var(--braise);
+  }
+  button{
+    width:100%;
+    background:var(--braise);
+    color:var(--parchemin);
+    border:none;
+    font-family:'Courier New', monospace;
+    text-transform:uppercase;
+    letter-spacing:.1em;
+    font-size:14px;
+    padding:14px;
+    border-radius:2px;
+    cursor:pointer;
+    transition:background .15s;
+  }
+  button:hover{background:var(--braise-vive);}
+
+  .message{
+    margin-top:16px;
+    font-family:'Courier New', monospace;
+    font-size:13px;
+    letter-spacing:.03em;
+    min-height:18px;
+    color:var(--fer);
+  }
+  .message.erreur{color:var(--braise-vive);}
+
+  /* Écran de succès */
+  .succes{
+    display:none;
+    text-align:center;
+    animation:apparait .7s ease;
+  }
+  .succes.visible{display:block;}
+  .formulaire.cachee{display:none;}
+  @keyframes apparait{
+    from{opacity:0; transform:scale(.96);}
+    to{opacity:1; transform:scale(1);}
+  }
+  .plaque.deverrouillee::before{
+    background:linear-gradient(90deg, var(--vert), var(--or), var(--vert));
+  }
+  .plaque.deverrouillee{
+    box-shadow:
+      0 0 0 1px rgba(0,0,0,0.6),
+      inset 0 1px 0 rgba(255,255,255,0.04),
+      0 0 60px rgba(90,138,90,0.35),
+      0 20px 60px rgba(0,0,0,0.6);
+  }
+  .grand-nombre{
+    font-size:56px;
+    color:var(--or);
+    line-height:1;
+    margin:10px 0;
+    letter-spacing:.02em;
+  }
+  .sous-texte{
+    font-family:'Courier New', monospace;
+    font-size:12px;
+    color:var(--fer);
+    letter-spacing:.05em;
+    line-height:1.7;
+  }
+</style>
+</head>
+<body>
+
+<div class="plaque" id="plaque">
+
+  <div class="formulaire" id="formulaire">
+    <div class="eyebrow">Atelier Godin · Registre final</div>
+    <h1>Saisie de la réponse</h1>
+
+    <div class="champ">
+      <label for="question">La question posée</label>
+      <select id="question">
+        <option value="" disabled selected>— Choisissez la question —</option>
+        <!-- ⚙️ Modifie/ajoute des options ici. Seule celle avec data-correcte="oui" est la bonne. -->
+        <option data-correcte="non">Où est né Godin ?</option>
+        <option data-correcte="non">Combien d'ouvriers travaillaient chez Godin ?</option>
+        <option data-correcte="oui">Combien de temps a vécu Godin ?</option>
+        <option data-correcte="non">En quelle année le Familistère a-t-il été fondé ?</option>
+        <option data-correcte="non">Qui a succédé à Godin à la tête du Familistère ?</option>
+      </select>
+    </div>
+
+    <div class="champ">
+      <label for="annees">Votre réponse</label>
+      <input type="number" id="annees" autocomplete="off" inputmode="numeric">
+    </div>
+
+    <button onclick="verifier()">Valider</button>
+    <div class="message" id="message"></div>
+  </div>
+
+  <div class="succes" id="succes">
+    <div class="eyebrow">Registre validé</div>
+    <div class="grand-nombre" id="grandNombre">70 ans</div>
+    <div class="sous-texte">
+      26 janvier 1817 — 15 janvier 1888<br>
+      Esquéhéries → Guise
+    </div>
+    <div class="sous-texte" style="margin-top:18px; color:var(--vert);">
+      LE FOURGON EST DÉVERROUILLÉ
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ⚙️ Réglages
+  const bonneReponseAnnees = 70;      // tolérance ci-dessous
+  const toleranceAnnees   = 0;        // mets 1 si tu veux accepter 69 ou 71
+
+  function verifier(){
+    const select = document.getElementById('question');
+    const optionChoisie = select.options[select.selectedIndex];
+    const questionOk = optionChoisie && optionChoisie.dataset.correcte === "oui";
+
+    const annees = parseInt(document.getElementById('annees').value, 10);
+    const msg = document.getElementById('message');
+    const anneesOk = !isNaN(annees) && Math.abs(annees - bonneReponseAnnees) <= toleranceAnnees;
+
+    if(questionOk && anneesOk){
+      document.getElementById('formulaire').classList.add('cachee');
+      document.getElementById('succes').classList.add('visible');
+      document.getElementById('plaque').classList.add('deverrouillee');
+    } else if(!questionOk){
+      msg.textContent = "✗ Cette question n'est pas la bonne. Relisez l'indice.";
+      msg.classList.add('erreur');
+    } else {
+      msg.textContent = "✗ Ce nombre d'années n'est pas correct.";
+      msg.classList.add('erreur');
+    }
+  }
+
+  document.getElementById('annees').addEventListener('keydown', e=>{
+    if(e.key === 'Enter') verifier();
+  });
+</script>
+
+</body>
+</html>
